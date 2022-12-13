@@ -7,6 +7,8 @@ const createElement = (tag, attributes, parent) => {
         attributes.class.forEach(i => el.classList.add(i));
     if (attributes.text)
         el.textContent = attributes.text;
+    if (attributes.href)
+        el.href = attributes.href;
     Array.from(document.querySelectorAll(parent)).at(-1).append(el);
 }
 
@@ -37,7 +39,8 @@ const listTemplate = list => {
         createElement("td", {text: `${card.username}`}, "tr");
         createElement("td", {text: `${card.email}`}, "tr");
         createElement("td", {text: `${card.phone}`}, "tr");
-        createElement("td", {text: `${card.website}`}, "tr");
+        createElement("td", {}, "tr");
+        createElement("a", {href: "#", text: `${card.website}`},"td");
     });
 }
 
