@@ -12,9 +12,9 @@ const createElement = (tag, attributes, parent) => {
     Array.from(document.querySelectorAll(parent)).at(-1).append(el);
 }
 
-const listTemplate = list => {
+const badgesInCollapsibles = dataArray => {
     createElement("ul", {class: ["collapsible"]}, "#cards");
-    list.forEach(card => {
+    dataArray.forEach(card => {
         createElement("li", {}, ".collapsible");
         createElement("div", {class: ["collapsible-header", "teal", "accent-1"]}, "li");
         createElement("i", {
@@ -40,28 +40,34 @@ const listTemplate = list => {
         createElement("td", {text: `${card.email}`}, "tr");
         createElement("td", {text: `${card.phone}`}, "tr");
         createElement("td", {}, "tr");
-        createElement("a", {href: "#", text: `${card.website}`},"td");
+        createElement("a", {href: "#", text: `${card.website}`}, "td");
     });
+    //Magic materialize.
+    M.Collapsible.init(document.querySelectorAll(".collapsible"));
 }
 
 const toggleLoader = () => {
     loader.classList.toggle("hide");
 }
-fetch(URL_LIST_USERS)
-    .then((response) => {
-        toggleLoader();
-        return response.json();
-    })
-    .then(listTemplate)
-    //Magic materialize.
-    .then(() => {
-        const elems = document.querySelectorAll(".collapsible");
-        const instances = M.Collapsible.init(elems);
-    })
-    .catch((error) => {
-        toggleLoader();
-        console.error("Что-то пошло не так...", error);
-    })
-    .finally(() => {
-        toggleLoader();
-    });
+
+const output = dataArray => {
+    //TODO: Сделать шапку с выбором вывода
+    //console.log(dataArray);
+    badgesInCollapsibles(dataArray);
+    //TODO:  Сдалать еще шаблон вывода
+}
+
+const getData = () => {
+    toggleLoader();
+    fetch(URL_LIST_USERS)
+        .then(response => response.json()
+        )
+        .then(output)
+        .catch(error => console.error("Что-то пошло не так...", error)
+        )
+        .finally(() => toggleLoader()
+        );
+}
+getData();
+
+
