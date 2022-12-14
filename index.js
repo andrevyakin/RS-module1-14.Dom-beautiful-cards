@@ -1,5 +1,7 @@
 const URL_LIST_USERS = "https://jsonplaceholder.typicode.com/users";
 const loader = document.querySelector(".progress");
+const selection = document.querySelector(".selection");
+const divOutput = document.querySelector(".output");
 
 const createElement = (tag, attributes, parent) => {
     const el = document.createElement(tag);
@@ -9,11 +11,19 @@ const createElement = (tag, attributes, parent) => {
         el.textContent = attributes.text;
     if (attributes.href)
         el.href = attributes.href;
+    if (attributes.data)
+        el.dataset[attributes.data.name] = attributes.data.value;
+    if (attributes.style)
+        el.style[attributes.style.name] = `${attributes.style.value}`;
     Array.from(document.querySelectorAll(parent)).at(-1).append(el);
 }
 
 const badgesInCollapsibles = dataArray => {
-    createElement("ul", {class: ["collapsible"]}, "#cards");
+    createElement("ul", {
+            class: ["collapsible"],
+            data: {name: "name", value: "collapsible"}
+        },
+        ".output");
     dataArray.forEach(card => {
         createElement("li", {}, ".collapsible");
         createElement("div", {class: ["collapsible-header", "teal", "accent-1"]}, "li");
@@ -46,17 +56,69 @@ const badgesInCollapsibles = dataArray => {
     M.Collapsible.init(document.querySelectorAll(".collapsible"));
 }
 
-const toggleLoader = () => {
-    loader.classList.toggle("hide");
+const basicCard = dataArray => {
+    createElement("div", {
+            class: ["row"],
+            data: {name: "name", value: "basic_card"}
+        },
+        ".output");
+    dataArray.forEach(card => {
+        createElement("div", {class: ["col", "s12", "l6"]}, '[data-name="basic_card"]');
+        createElement("div", {class: ["card", "blue-grey", "darken-1"]}, ".col");
+        createElement("div", {class: ["card-content", "white-text"]}, ".card");
+        createElement("span", {
+            class: ["card-title", "center-align", "truncate"],
+            text: card.name
+        }, ".card-content");
+        createElement("div", {
+                class: ["row"],
+                style: {name: "marginBottom", value: '0'}
+            },
+            ".card-content");
+        createElement("div", {class: ["col", "s2"]}, ".row");
+        createElement("i", {
+                class: ["medium", "material-icons"],
+                text: "add_a_photo"
+            },
+            ".col");
+        createElement("div", {class: ["col", "s8", "offset-s2"]}, ".row");
+        createElement("p", {class: ["truncate"], text: `Company: "${card.company.name}"`}, ".col");
+        createElement("p", {
+            class: ["truncate"],
+            text: card.company.bs[0].toUpperCase() + card.company.bs.slice(1)
+        }, ".col");
+        createElement("p", {class: ["truncate"], text: `Phone: ${card.phone}`}, ".col");
+        createElement("div", {class: ["card-action", "center-align", "truncate"]}, ".card");
+        createElement("a", {href: "#", text: `${card.email}`}, ".card-action");
+        createElement("a", {href: "#", text: `${card.website}`}, ".card-action");
+    });
+}
+
+const cleanOutput = dataValue => {
+    if (divOutput.firstElementChild?.dataset.name === dataValue) {
+        divOutput.classList.toggle("hide");
+        return false;
+    } else if (divOutput.childNodes.length && divOutput.firstElementChild?.dataset.name !== dataValue) {
+        divOutput.classList.remove("hide");
+        divOutput.replaceChildren();
+        return true;
+    }
+    return true;
 }
 
 const output = dataArray => {
-    //TODO: Сделать шапку с выбором вывода
-    //console.log(dataArray);
-    badgesInCollapsibles(dataArray);
-    //TODO:  Сдалать еще шаблон вывода
+    selection.addEventListener("click", event => {
+        const isSelectedButtons = event.target.closest(".selected_button")
+        if (isSelectedButtons.classList.contains("badges_in_collapsibles") && cleanOutput("collapsible"))
+            badgesInCollapsibles(dataArray);
+        if (isSelectedButtons.classList.contains("basic_card") && cleanOutput("basic_card"))
+            basicCard(dataArray);
+    })
 }
 
+const toggleLoader = () => {
+    loader.classList.toggle("hide");
+}
 const getData = () => {
     toggleLoader();
     fetch(URL_LIST_USERS)
