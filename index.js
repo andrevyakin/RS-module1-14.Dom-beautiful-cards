@@ -1,8 +1,12 @@
 const URL_LIST_USERS = "https://jsonplaceholder.typicode.com/users";
+//Полоска загрузки, появляется при медленном интернете.
 const loader = document.querySelector(".progress");
+//Div с доченими кнопками выбора.
 const selection = document.querySelector(".selection");
+//Div, куда выводятся карточки.
 const divOutput = document.querySelector(".output");
 
+//Помошник содания HTML элементов.
 const createElement = (tag, attributes, parent) => {
     const el = document.createElement(tag);
     if (attributes.class)
@@ -18,6 +22,7 @@ const createElement = (tag, attributes, parent) => {
     Array.from(document.querySelectorAll(parent)).at(-1).append(el);
 }
 
+//Шаблон Materialize "Badges in Collapsibles".
 const badgesInCollapsibles = dataArray => {
     createElement("ul", {
             class: ["collapsible"],
@@ -56,6 +61,7 @@ const badgesInCollapsibles = dataArray => {
     M.Collapsible.init(document.querySelectorAll(".collapsible"));
 }
 
+//Шаблон Materialize "Basic Card".
 const basicCard = dataArray => {
     createElement("div", {
             class: ["row"],
@@ -94,6 +100,7 @@ const basicCard = dataArray => {
     });
 }
 
+//Проверяет пуст ли div для вывода, если нет, то очищает или скрывает его.
 const cleanOutput = dataValue => {
     if (divOutput.firstElementChild?.dataset.name === dataValue) {
         divOutput.classList.toggle("hide");
@@ -106,6 +113,7 @@ const cleanOutput = dataValue => {
     return true;
 }
 
+//Обраболтка кнопок выбора шаблона.
 const output = dataArray => {
     selection.addEventListener("click", event => {
         const isSelectedButtons = event.target.closest(".selected_button")
@@ -116,9 +124,13 @@ const output = dataArray => {
     })
 }
 
+//Переключатель полоски загрузки.
+//Можно закоментоить finally в getData, чтобы рассмотреть.
 const toggleLoader = () => {
     loader.classList.toggle("hide");
 }
+
+//Получение данных с сайта.
 const getData = () => {
     toggleLoader();
     fetch(URL_LIST_USERS)
@@ -130,6 +142,8 @@ const getData = () => {
         .finally(() => toggleLoader()
         );
 }
+
+//Запуск
 getData();
 
 
