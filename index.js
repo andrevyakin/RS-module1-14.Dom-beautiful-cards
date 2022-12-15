@@ -42,7 +42,7 @@ const badgesInCollapsibles = dataArray => {
             text: `${card.id}`
         }, ".collapsible-header");
         createElement("div", {class: ["collapsible-body", "teal", "lighten-4"]}, "li");
-        createElement("table", {}, ".collapsible-body");
+        createElement("table", {class: ["responsive-table"]}, ".collapsible-body");
         createElement("thead", {}, "table");
         createElement("tr", {}, "thead");
         createElement("th", {text: "Username"}, "tr");
